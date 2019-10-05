@@ -1,0 +1,24 @@
+{
+  "name": "thegolfpool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "export SLS_DEBUG=* && node --inspect /usr/local/bin/sls offline -P4000 -s dev --skipCacheInvalidation"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-datasource": "^0.6.3",
+    "apollo-datasource-rest": "^0.6.4",
+    "apollo-server-lambda": "^2.9.4",
+    "graphql": "^14.5.7",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^1.6.0",
+    "mongoose": "^5.7.1"
+  },
+  "devDependencies": {
+    "serverless-offline": "^5.11.0"
+  }
+}
