@@ -7,21 +7,28 @@ const resolvers = {
     async user(parent, args, context, info) {
       return {
         email: context.user.email,
-        firstName: context.user.first_name || 's',
-        lastName: context.user.last_name || 's'
+        firstName: context.user.firstName || '',
+        lastName: context.user.lastName || ''
       }
     }
   },
   Mutation: {
-    updateUser: (root, args, context) => {
-      context.user.first_name = args.firstName
-      context.user.last_name = args.lastName
-      context.user.save()
-
-      return {
-        firstName: context.user.first_name,
-        lastName: context.user.last_name,
-      };
+    updateUser: async (root, args, context) => {
+      console.log('test')
+      const params = {
+        TableName:"Users",
+        Key:{
+            "id": context.user.id
+        },
+        UpdateExpression: "set firstName = :f, lastName=:l",
+        ExpressionAttributeValues:{
+            ":f": args.firstName,
+            ":l": args.lastName
+        },
+        ReturnValues:"UPDATED_NEW"
+      }
+      let user = await context.dataSources.userAPI.update(params)
+      return user.Attributes;
     }
   },
   User: {

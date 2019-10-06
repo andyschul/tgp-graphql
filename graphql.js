@@ -1,5 +1,4 @@
 const { ApolloServer } = require('apollo-server-lambda');
-const User = require('./models/user');
 const UserAPI = require('./datasources/user');
 const SportsAPI = require('./datasources/sports');
 const typeDefs = require('./schema');
@@ -14,6 +13,8 @@ const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 const context = async (req) => {
   let token = req.event.headers.authorization;
   const decoded = jwt.decode(token, {complete:true})
+  // TODO: verify token
+
   const params = {
     TableName: "Users",
     Key: {
@@ -21,14 +22,12 @@ const context = async (req) => {
     }
   }
   const data = await docClient.get(params).promise();
-
-  // TODO: verify token
   return {user: data.Item}
 };
 
 const dataSources = () => ({
-  userAPI: new UserAPI({ User }),
-  sportsAPI: new SportsAPI({ User }),
+  userAPI: new UserAPI(),
+  sportsAPI: new SportsAPI(),
 });
 
 const server = new ApolloServer({ 
