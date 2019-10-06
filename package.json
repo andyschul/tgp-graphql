@@ -13,6 +13,7 @@
     "apollo-datasource": "^0.6.3",
     "apollo-datasource-rest": "^0.6.4",
     "apollo-server-lambda": "^2.9.4",
+    "aws-sdk": "^2.543.0",
     "graphql": "^14.5.7",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.6.0",

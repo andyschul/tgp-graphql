@@ -6,16 +6,24 @@ const typeDefs = require('./schema');
 const jwt = require('jsonwebtoken');
 // const jwksRsa = require('jwks-rsa');
 const resolvers = require('./resolvers');
-
-
+const AWS = require('aws-sdk');
+const ddb = new AWS.DynamoDB({apiVersion: '2012-10-08'});
+AWS.config.update({region: 'us-east-1'});
+const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 const context = async (req) => {
   let token = req.event.headers.authorization;
   const decoded = jwt.decode(token, {complete:true})
-  const id = decoded.payload.sub.split('|')[1];
-  const user = await User.findOne({ _id: id });
+  const params = {
+    TableName: "Users",
+    Key: {
+      id: decoded.payload.sub
+    }
+  }
+  const data = await docClient.get(params).promise();
+
   // TODO: verify token
-  return {user: user}
+  return {user: data.Item}
 };
 
 const dataSources = () => ({
