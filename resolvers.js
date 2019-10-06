@@ -1,6 +1,9 @@
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!',
+    hello: async (parent, args, context, info) => {
+      schedule = await context.dataSources.sportsAPI.getSchedule()
+      return 'Hello world'
+    },
     async user(parent, args, context, info) {
       return {
         email: context.user.email,
