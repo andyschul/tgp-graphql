@@ -1,20 +1,18 @@
 const resolvers = {
   Query: {
-    hello: async (parent, args, context, info) => {
-      schedule = await context.dataSources.sportsAPI.getSchedule()
+    hello: async () => {
       return 'Hello world'
     },
-    async user(parent, args, context, info) {
-      return {
-        email: context.user.email,
-        firstName: context.user.firstName || '',
-        lastName: context.user.lastName || ''
-      }
+    async user(_, __, {user}) {
+      return user
+    },
+    async schedule(_, __, { dataSources }) {
+      const schedule = await dataSources.sportsAPI.getSchedule('2019')
+      return schedule.tournaments;
     }
   },
   Mutation: {
-    updateUser: async (root, args, context) => {
-      console.log('test')
+    updateUser: async (_, args, context) => {
       const params = {
         TableName:"Users",
         Key:{
