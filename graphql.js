@@ -16,9 +16,10 @@ const context = async (req) => {
   // TODO: verify token
 
   const params = {
-    TableName: "Users",
+    TableName: "GolfPool",
     Key: {
-      id: decoded.payload.sub
+      id: `User-${decoded.payload.sub}`,
+      type: `User-${decoded.payload.sub}`
     }
   }
   const data = await docClient.get(params).promise();

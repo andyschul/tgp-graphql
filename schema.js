@@ -5,6 +5,7 @@ const typeDefs = gql`
     hello: String
     user: User
     schedule: [Tournament!]!
+    groups: [Group]
   }
   type User {
     email: String!
@@ -15,12 +16,20 @@ const typeDefs = gql`
     id: String!
     name: String!
   }
-  type Mutation {
-    updateUser(firstName: String, lastName: String): MutationResponse
+  type Group {
+    id: String!
+    name: String!
   }
-  type MutationResponse {
+  type Mutation {
+    updateUser(firstName: String, lastName: String): updateUserResponse
+    createGroup(name: String): createGroupResponse
+  }
+  type updateUserResponse {
     firstName: String
     lastName: String
+  }
+  type createGroupResponse {
+    name: String
   }
 `;
 
