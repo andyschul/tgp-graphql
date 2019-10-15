@@ -21,6 +21,10 @@ class UserAPI extends DataSource {
     return docClient.put(params).promise()
   }
 
+  async query(params) {
+    return docClient.query(params).promise()
+  }
+
   async batchWrite(params) {
     return docClient.batchWrite(params).promise()
   }

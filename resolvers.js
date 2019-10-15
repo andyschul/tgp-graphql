@@ -5,24 +5,46 @@ const resolvers = {
     hello: async () => {
       return 'Hello world'
     },
-    async user(_, __, {user}) {
-      return user
+    async user(_, __, context) {
+      const params = {
+        TableName: "GolfPool",
+        IndexName: "type-data-index",
+        KeyConditionExpression:"#type = :typeValue and begins_with(#data, :dataValue)",
+        ExpressionAttributeNames: {
+            "#type":"type",
+            "#data":"data"
+        },
+        ExpressionAttributeValues: {
+            ":typeValue": 'User-1677e7c2-28d4-4fbe-99b4-12f5b70946ca',
+            ":dataValue": 'Group-'
+        }
+      }
+      let groups = await context.dataSources.userAPI.query(params)
+      return {
+        ...context.user,
+        groups: groups.Items
+      }
+    },
+    async group(_, args, context) {
+      const params = {
+        TableName: "GolfPool",
+        KeyConditionExpression:"#id = :idValue",
+        ExpressionAttributeNames: {
+            "#id":"id",
+        },
+        ExpressionAttributeValues: {
+            ":idValue": args.id,
+        }
+      }
+      let {Items} = await context.dataSources.userAPI.query(params);
+      let group = Items.shift()
+      group.users = Items
+      return group;
     },
     async schedule(_, __, { dataSources }) {
       const schedule = await dataSources.sportsAPI.getSchedule('2019')
       return schedule.tournaments;
     },
-    async groups(_, __, { dataSources }) {
-      const params = {
-        TableName: "GolfPool",
-        Key: {
-          id: decoded.payload.sub
-        }
-      }
-      const data = await dataSources.userAPI.get(params);
-      const schedule = await dataSources.userAPI.get()
-      return schedule.tournaments;
-    }
   },
   Mutation: {
     createGroup: async (_, args, context) => {
@@ -35,7 +57,7 @@ const resolvers = {
                 Item: {
                   'id': `Group-${groupId}`,
                   'type': `Group-${groupId}`,
-                  'name': args.name,
+                  'groupName': args.name,
                   'seasons': [2019],
                   'owner': context.user.id
                 }
@@ -44,19 +66,14 @@ const resolvers = {
             {
               PutRequest: {
                 Item: {
-                  'id': context.user.id,
-                  'type': `Group-${groupId}`,
-                  'role': 'owner',
-                  'name': args.name,
-                }
-              }
-            },
-            {
-              PutRequest: {
-                Item: {
                   'id': `Group-${groupId}`,
                   'type': context.user.id,
-                  'name': 'Team A',
+                  'firstName': context.user.firstName,
+                  'lastName': context.user.lastName,
+                  'teamName': 'Team A',
+                  'role': 'owner',
+                  'groupName': args.name,
+                  'data': `Group-${groupId}`
                 }
               }
             }

@@ -5,21 +5,36 @@ const typeDefs = gql`
     hello: String
     user: User
     schedule: [Tournament!]!
-    groups: [Group]
+    group(id: ID!): Group
+  }
+  type Group {
+    id: ID!
+    groupName: String
+    owner: String
+    users: [GroupUser]
+  }
+  type GroupUser {
+    firstName: String!
+    lastName: String!
   }
   type User {
     email: String!
     firstName: String!
     lastName: String!
+    groups: [UserGroup]
   }
   type Tournament {
     id: String!
     name: String!
   }
-  type Group {
-    id: String!
-    name: String!
+  type UserGroup {
+    id: ID!
+    groupName: String!
+    role: String
+    teamName: String
+    users: [GroupUser]
   }
+
   type Mutation {
     updateUser(firstName: String, lastName: String): updateUserResponse
     createGroup(name: String): createGroupResponse
