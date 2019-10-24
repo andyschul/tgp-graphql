@@ -11,11 +11,13 @@ const typeDefs = gql`
     id: ID!
     groupName: String
     owner: String
+    invites: [String!]
     users: [GroupUser]
   }
   type GroupUser {
     firstName: String!
     lastName: String!
+    role: String!
   }
   type User {
     email: String!
@@ -38,6 +40,7 @@ const typeDefs = gql`
   type Mutation {
     updateUser(firstName: String, lastName: String): updateUserResponse
     createGroup(name: String): createGroupResponse
+    inviteToGroup(groupId: ID!, email: String): inviteResponse
   }
   type updateUserResponse {
     firstName: String
@@ -45,6 +48,9 @@ const typeDefs = gql`
   }
   type createGroupResponse {
     name: String
+  }
+  type inviteResponse {
+    email: String
   }
 `;
 

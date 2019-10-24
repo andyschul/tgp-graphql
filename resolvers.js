@@ -59,6 +59,7 @@ const resolvers = {
                   'type': `Group-${groupId}`,
                   'groupName': args.name,
                   'seasons': [2019],
+                  'invites': [],
                   'owner': context.user.id
                 }
               }
@@ -70,7 +71,7 @@ const resolvers = {
                   'type': context.user.id,
                   'firstName': context.user.firstName,
                   'lastName': context.user.lastName,
-                  'teamName': 'Team A',
+                  'teamName': `Team ${context.user.lastName}`,
                   'role': 'owner',
                   'groupName': args.name,
                   'data': `Group-${groupId}`
@@ -104,6 +105,35 @@ const resolvers = {
       }
       let user = await context.dataSources.userAPI.update(params);
       return user.Attributes;
+    },
+    inviteToGroup: async (_, args, context) => {
+      const params = {
+        TableName: "GolfPool",
+        Key: {
+          id: args.groupId,
+          type: args.groupId
+        }
+      }
+      let group = await context.dataSources.userAPI.get(params);
+      if (!group.Item.invites.includes(args.email)) {
+        group.Item.invites.push(args.email);
+        const updateParams = {
+          TableName:"GolfPool",
+          Key:{
+              "id": args.groupId,
+              "type": args.groupId
+          },
+          UpdateExpression: "set invites = :i",
+          ExpressionAttributeValues:{
+              ":i": group.Item.invites
+          },
+          ReturnValues:"UPDATED_NEW"
+        }
+        let res = await context.dataSources.userAPI.update(updateParams);
+        return 'invited!'
+      }
+      console.log(group)
+      return 'e'
     }
   },
   User: {
