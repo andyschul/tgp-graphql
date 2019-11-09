@@ -15,7 +15,7 @@ const resolvers = {
             "#data":"data"
         },
         ExpressionAttributeValues: {
-            ":typeValue": 'User-1677e7c2-28d4-4fbe-99b4-12f5b70946ca',
+            ":typeValue": context.user.id,
             ":dataValue": 'Group-'
         }
       }
@@ -137,6 +137,36 @@ const resolvers = {
       return {msg: 'success'};
     },
     updateUser: async (_, args, context) => {
+
+      const groupParams = {
+        TableName: "GolfPool",
+        IndexName: "type-data-index",
+        KeyConditionExpression:"#type = :typeValue and begins_with(#data, :dataValue)",
+        ExpressionAttributeNames: {
+            "#type":"type",
+            "#data":"data"
+        },
+        ExpressionAttributeValues: {
+            ":typeValue": context.user.id,
+            ":dataValue": 'Group-'
+        }
+      }
+      let groups = await context.dataSources.userAPI.query(groupParams)
+
+      let writeQuery = groups.Items.map(g=>({PutRequest: {Item: {...g, firstName: args.firstName, lastName: args.lastName }  }}))
+
+      const batchParams = {
+        RequestItems: {
+          'GolfPool': writeQuery
+        }
+      }
+      try {
+        let group = await context.dataSources.userAPI.batchWrite(batchParams);
+      }
+      catch (err) {
+        console.log("Error", err)
+      }
+
       const params = {
         TableName:"GolfPool",
         Key:{

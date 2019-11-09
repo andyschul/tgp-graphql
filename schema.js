@@ -15,14 +15,14 @@ const typeDefs = gql`
     users: [GroupUser]
   }
   type GroupUser {
-    firstName: String!
-    lastName: String!
+    firstName: String
+    lastName: String
     role: String!
   }
   type User {
     email: String!
-    firstName: String!
-    lastName: String!
+    firstName: String
+    lastName: String
     groups: [UserGroup]
   }
   type Tournament {
