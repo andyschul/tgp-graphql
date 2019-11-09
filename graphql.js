@@ -11,7 +11,7 @@ AWS.config.update({region: 'us-east-1'});
 const docClient = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 
 const context = async (req) => {
-  let token = req.event.headers.authorization;
+  let token = req.event.headers.Authorization;
   const decoded = jwt.decode(token, {complete:true})
   // TODO: verify token
 
