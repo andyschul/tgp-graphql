@@ -48,15 +48,15 @@ const resolvers = {
   },
   Mutation: {
     createGroup: async (_, args, context) => {
-      const groupId = uuidv1()
+      const groupId = `Group-${uuidv1()}`
       const params = {
         RequestItems: {
           'GolfPool': [
             {
               PutRequest: {
                 Item: {
-                  'id': `Group-${groupId}`,
-                  'type': `Group-${groupId}`,
+                  'id': groupId,
+                  'type': groupId,
                   'groupName': args.name,
                   'seasons': [2019],
                   'invites': [],
@@ -67,14 +67,14 @@ const resolvers = {
             {
               PutRequest: {
                 Item: {
-                  'id': `Group-${groupId}`,
+                  'id': groupId,
                   'type': context.user.id,
                   'firstName': context.user.firstName,
                   'lastName': context.user.lastName,
                   'teamName': `Team ${context.user.lastName}`,
                   'role': 'owner',
                   'groupName': args.name,
-                  'data': `Group-${groupId}`
+                  'data': groupId
                 }
               }
             }
@@ -88,6 +88,53 @@ const resolvers = {
         console.log("Error", err)
       }
       return group.Attributes;
+    },
+    joinGroup: async (_, args, context) => {
+      const groupParams = {
+        TableName: "GolfPool",
+        Key: {
+          id: args.groupId,
+          type: args.groupId
+        }
+      }
+      let group = await context.dataSources.userAPI.get(groupParams);
+
+      if (!group.Item.invites.includes(context.user.email)) {
+        return {msg: 'Not invited'}
+      }
+      group.Item.invites = group.Item.invites.filter(email => email !== context.user.email)
+      const params = {
+        RequestItems: {
+          'GolfPool': [
+            {
+              PutRequest: {
+                Item: group.Item
+              }
+            },
+            {
+              PutRequest: {
+                Item: {
+                  'id': args.groupId,
+                  'type': context.user.id,
+                  'firstName': context.user.firstName,
+                  'lastName': context.user.lastName,
+                  'teamName': args.name,
+                  'role': 'member',
+                  'groupName': group.Item.groupName,
+                  'data': args.groupId
+                }
+              }
+            }
+          ]
+        }
+      }
+      try {
+        let group = await context.dataSources.userAPI.batchWrite(params);
+      }
+      catch (err) {
+        console.log("Error", err)
+      }
+      return {msg: 'success'};
     },
     updateUser: async (_, args, context) => {
       const params = {

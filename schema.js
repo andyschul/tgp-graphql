@@ -40,11 +40,15 @@ const typeDefs = gql`
   type Mutation {
     updateUser(firstName: String, lastName: String): updateUserResponse
     createGroup(name: String): createGroupResponse
+    joinGroup(groupId: ID!, name: String): joinGroupResponse
     inviteToGroup(groupId: ID!, email: String): inviteResponse
   }
   type updateUserResponse {
     firstName: String
     lastName: String
+  }
+  type joinGroupResponse {
+    msg: String
   }
   type createGroupResponse {
     name: String
