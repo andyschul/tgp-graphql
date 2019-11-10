@@ -16,7 +16,7 @@ const context = async (req) => {
   // TODO: verify token
 
   const params = {
-    TableName: "GolfPool",
+    TableName: process.env.DYNAMO_TABLE,
     Key: {
       id: `User-${decoded.payload.sub}`,
       type: `User-${decoded.payload.sub}`

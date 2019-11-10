@@ -7,7 +7,7 @@ const resolvers = {
     },
     async user(_, __, context) {
       const params = {
-        TableName: "GolfPool",
+        TableName: process.env.DYNAMO_TABLE,
         IndexName: "type-data-index",
         KeyConditionExpression:"#type = :typeValue and begins_with(#data, :dataValue)",
         ExpressionAttributeNames: {
@@ -27,7 +27,7 @@ const resolvers = {
     },
     async group(_, args, context) {
       const params = {
-        TableName: "GolfPool",
+        TableName: process.env.DYNAMO_TABLE,
         KeyConditionExpression:"#id = :idValue",
         ExpressionAttributeNames: {
             "#id":"id",
@@ -51,7 +51,7 @@ const resolvers = {
       const groupId = `Group-${uuidv1()}`
       const params = {
         RequestItems: {
-          'GolfPool': [
+          [process.env.DYNAMO_TABLE]: [
             {
               PutRequest: {
                 Item: {
@@ -91,7 +91,7 @@ const resolvers = {
     },
     joinGroup: async (_, args, context) => {
       const groupParams = {
-        TableName: "GolfPool",
+        TableName: process.env.DYNAMO_TABLE,
         Key: {
           id: args.groupId,
           type: args.groupId
@@ -105,7 +105,7 @@ const resolvers = {
       group.Item.invites = group.Item.invites.filter(email => email !== context.user.email)
       const params = {
         RequestItems: {
-          'GolfPool': [
+          [process.env.DYNAMO_TABLE]: [
             {
               PutRequest: {
                 Item: group.Item
@@ -139,7 +139,7 @@ const resolvers = {
     updateUser: async (_, args, context) => {
 
       const groupParams = {
-        TableName: "GolfPool",
+        TableName: process.env.DYNAMO_TABLE,
         IndexName: "type-data-index",
         KeyConditionExpression:"#type = :typeValue and begins_with(#data, :dataValue)",
         ExpressionAttributeNames: {
@@ -157,7 +157,7 @@ const resolvers = {
 
       const batchParams = {
         RequestItems: {
-          'GolfPool': writeQuery
+          [process.env.DYNAMO_TABLE]: writeQuery
         }
       }
       try {
@@ -168,7 +168,7 @@ const resolvers = {
       }
 
       const params = {
-        TableName:"GolfPool",
+        TableName:process.env.DYNAMO_TABLE,
         Key:{
             "id": context.user.id,
             "type": context.user.id
@@ -185,7 +185,7 @@ const resolvers = {
     },
     inviteToGroup: async (_, args, context) => {
       const params = {
-        TableName: "GolfPool",
+        TableName: process.env.DYNAMO_TABLE,
         Key: {
           id: args.groupId,
           type: args.groupId
@@ -195,7 +195,7 @@ const resolvers = {
       if (!group.Item.invites.includes(args.email)) {
         group.Item.invites.push(args.email);
         const updateParams = {
-          TableName:"GolfPool",
+          TableName:process.env.DYNAMO_TABLE,
           Key:{
               "id": args.groupId,
               "type": args.groupId
