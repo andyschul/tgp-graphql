@@ -12,8 +12,22 @@ class SportsAPI extends RESTDataSource {
   }
 
   async getSchedule(year) {
-    let schedule = await getAsync('schedule:2019');
+    let schedule = await getAsync(`schedule:${year}`);
     return JSON.parse(schedule);
+  }
+
+  async getTournament(tournamentId) {
+    let tournament = await getAsync(`tournaments:${tournamentId}`);
+    tournament = JSON.parse(tournament);
+    return {
+      id: tournament.id,
+      name: tournament.name,
+      startDate: tournament.start_date,
+      endDate: tournament.end_date,
+      purse: tournament.purse,
+      winningShare: tournament.winning_share,
+      venue: tournament.venue
+    }
   }
 }
 

@@ -4,8 +4,9 @@ const typeDefs = gql`
   type Query {
     hello: String
     user: User
-    schedule: [Tournament!]!
+    schedule(year: String): [ScheduleTournament!]!
     group(id: ID!): Group
+    tournament(id: ID!): Tournament
   }
   type Group {
     id: ID!
@@ -26,8 +27,22 @@ const typeDefs = gql`
     groups: [UserGroup]
   }
   type Tournament {
+    id: ID
+    name: String
+    startDate: String
+    endDate: String
+    purse: Int
+    winningShare: Int
+    venue: Venue
+  }
+  type Venue {
+    id: String
+    name: String
+  }
+  type ScheduleTournament {
     id: String!
     name: String!
+    startDate: String
   }
   type UserGroup {
     id: ID!

@@ -41,9 +41,13 @@ const resolvers = {
       group.users = Items
       return group;
     },
-    async schedule(_, __, { dataSources }) {
-      const schedule = await dataSources.sportsAPI.getSchedule('2019')
+    async schedule(_, args, { dataSources }) {
+      const schedule = await dataSources.sportsAPI.getSchedule(args.year)
       return schedule.tournaments;
+    },
+    async tournament(_, args, { dataSources }) {
+      const tournament = await dataSources.sportsAPI.getTournament(args.id)
+      return tournament;
     },
   },
   Mutation: {
