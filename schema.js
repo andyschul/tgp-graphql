@@ -34,6 +34,16 @@ const typeDefs = gql`
     purse: Int
     winningShare: Int
     venue: Venue
+    groups: [TournamentGroup]
+  }
+  type TournamentGroup {
+    id: ID
+    players: [TournamentPlayer]
+  }
+  type TournamentPlayer {
+    id: ID
+    firstName: String
+    lastName: String
   }
   type Venue {
     id: String
