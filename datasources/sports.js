@@ -10,7 +10,13 @@ const playerMapper = (players) => {
     id: p.id,
     firstName: p.first_name,
     lastName: p.last_name,
-    country: p.country
+    country: p.country,
+    status: p.status || null,
+    money: p.money || null,
+    position: p.position || null,
+    score: p.score || null,
+    strokes: p.strokes || null,
+    tied: p.tied || null
   }))
 }
 
@@ -28,6 +34,8 @@ class SportsAPI extends RESTDataSource {
   async getTournament(tournamentId) {
     let tournament = await getAsync(`tournaments:${tournamentId}`);
     let groupsRes = await getAsync(`tournaments:${tournamentId}:groups`);
+    let leaderboardRes = await getAsync(`tournaments:${tournamentId}:leaderboard`);
+    let leaderboard = JSON.parse(leaderboardRes);
     tournament = JSON.parse(tournament);
     let groups = groupsRes ? JSON.parse(groupsRes): [];
     groups = groups.map((g,i)=>({id:i+1, players: playerMapper(g)}))
@@ -39,7 +47,8 @@ class SportsAPI extends RESTDataSource {
       purse: tournament.purse,
       winningShare: tournament.winning_share,
       venue: tournament.venue,
-      groups: groups
+      groups: groups,
+      leaderboard: playerMapper(leaderboard.leaderboard)
     };
   }
 }

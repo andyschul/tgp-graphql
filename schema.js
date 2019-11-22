@@ -35,10 +35,23 @@ const typeDefs = gql`
     winningShare: Int
     venue: Venue
     groups: [TournamentGroup]
+    leaderboard: [LeaderboardPlayer]
   }
   type TournamentGroup {
     id: ID
     players: [TournamentPlayer]
+  }
+  type LeaderboardPlayer {
+    id: ID
+    firstName: String
+    lastName: String
+    country: String
+    status: String
+    money: Int
+    position: Int
+    score: Int
+    strokes: Int
+    tied: Boolean
   }
   type TournamentPlayer {
     id: ID
