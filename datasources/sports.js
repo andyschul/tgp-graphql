@@ -9,7 +9,8 @@ const playerMapper = (players) => {
   return players.map(p => ({
     id: p.id,
     firstName: p.first_name,
-    lastName: p.last_name
+    lastName: p.last_name,
+    country: p.country
   }))
 }
 

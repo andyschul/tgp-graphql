@@ -44,6 +44,7 @@ const typeDefs = gql`
     id: ID
     firstName: String
     lastName: String
+    country: String
   }
   type Venue {
     id: String
