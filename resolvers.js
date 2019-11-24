@@ -45,8 +45,32 @@ const resolvers = {
       const schedule = await dataSources.sportsAPI.getSchedule(args.year)
       return schedule.tournaments;
     },
-    async tournament(_, args, { dataSources }) {
+    async tournament(_, args, { user, dataSources }) {
       const tournament = await dataSources.sportsAPI.getTournament(args.id)
+      if (args.groupId) {
+        const params = {
+          TableName: process.env.DYNAMO_TABLE,
+          Key: {
+            id: user.id,
+            type: `${args.groupId}#${args.id}`
+          }
+        }
+        let picks = [];
+        try {
+          let userTournament = await dataSources.userAPI.get(params);
+          picks = userTournament.Item.picks;
+        } catch (err) {
+          console.log(err)
+        }
+        for (let g of tournament.groups) {
+          for (let p of g.players) {
+            if (picks.includes(p.id)) {
+              p.isSelected = true
+            }
+          }
+        }
+      }
+
       return tournament;
     },
   },

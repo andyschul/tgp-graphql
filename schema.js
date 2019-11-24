@@ -6,7 +6,7 @@ const typeDefs = gql`
     user: User
     schedule(year: String): [ScheduleTournament!]!
     group(id: ID!): Group
-    tournament(id: ID!): Tournament
+    tournament(id: ID!, groupId: ID): Tournament
   }
   type Group {
     id: ID!
@@ -58,6 +58,7 @@ const typeDefs = gql`
     firstName: String
     lastName: String
     country: String
+    isSelected: Boolean
   }
   type Venue {
     id: String
