@@ -211,6 +211,34 @@ const resolvers = {
       let user = await context.dataSources.userAPI.update(params);
       return user.Attributes;
     },
+    updatePicks: async (_, args, {dataSources, user}) => {
+      // extra check to make sure only one player is selected per group
+      const tournament = await dataSources.sportsAPI.getTournament(args.tournamentId);
+      let picks = []
+      for (let g of tournament.groups) {
+        for (let p of g.players) {
+          if (args.picks.includes(p.id)) {
+            picks.push(p.id)
+            break
+          }
+        }
+      }
+
+      const updateParams = {
+        TableName:process.env.DYNAMO_TABLE,
+        Key:{
+            "id": user.id,
+            "type": `${args.groupId}#${args.tournamentId}`
+        },
+        UpdateExpression: "set picks = :i",
+        ExpressionAttributeValues:{
+            ":i": picks
+        },
+        ReturnValues:"UPDATED_NEW"
+      }
+      let res = await dataSources.userAPI.update(updateParams);
+      return {success: true}
+    },
     inviteToGroup: async (_, args, context) => {
       const params = {
         TableName: process.env.DYNAMO_TABLE,

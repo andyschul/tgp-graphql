@@ -82,10 +82,14 @@ const typeDefs = gql`
     createGroup(name: String): createGroupResponse
     joinGroup(groupId: ID!, name: String): joinGroupResponse
     inviteToGroup(groupId: ID!, email: String): inviteResponse
+    updatePicks(groupId: ID!, tournamentId: ID!, picks: [String]): updatePicksResponse
   }
   type updateUserResponse {
     firstName: String
     lastName: String
+  }
+  type updatePicksResponse {
+    success: Boolean
   }
   type joinGroupResponse {
     msg: String
